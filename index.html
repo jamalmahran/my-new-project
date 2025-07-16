@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Card</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="card">
+    <div class="cake">
+      <div class="candle">
+        <div class="flame"></div>
+      </div>
+      <div class="icing"></div>
+    </div>
+    <div class="greeting">Happy Birthday my Love!</div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const body = document.body;
+      const colors = ["#ffffff", "#f8c2c9", "#d19bb3", "#e5bbd6"];
+      for (let i = 0; i < 120; i++) {
+        const conf = document.createElement("div");
+        conf.classList.add("confetti");
+        const size = Math.random() * 8 + 4;
+        conf.style.width           = size + "px";
+        conf.style.height          = size + "px";
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.left            = Math.random() * 100 + "%";
+        // نبني animation name ومدة في نفس الخاصية
+        const duration = Math.random() * 3 + 2;
+        conf.style.animation = `fall ${duration}s linear infinite`;
+        // نص دوائر نص مربعات
+        if (Math.random() < 0.5) conf.style.borderRadius = "50%";
+        body.appendChild(conf);
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const flame = document.querySelector('.flame');
+  let blownOrShaken = false;
+
+  // دالة تطفي اللهب
+  function extinguish() {
+    if (blownOrShaken) return;
+    blownOrShaken = true;
+    flame.style.opacity = '0';
+  }
+
+  // 1) (اختياري) اطلب إذن الحركة على iOS 13+
+  function enableMotion() {
+    if (
+      typeof DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function'
+    ) {
+      DeviceMotionEvent.requestPermission()
+        .then(permissionState => {
+          if (permissionState === 'granted') {
+            window.addEventListener('devicemotion', shakeHandler);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // أندرويد وأوبرا وسفاري القديمة
+      window.addEventListener('devicemotion', shakeHandler);
+    }
+  }
+
+  // 2) كاشف الهزة
+  let lastTime = new Date();
+  let lastX = null, lastY = null, lastZ = null;
+  const SHAKE_THRESHOLD = 15; // جرّب تزيد أو تقلل حسب الحساسية
+
+  function shakeHandler(event) {
+    const acc = event.accelerationIncludingGravity;
+    if (acc.x === null) return; // بعض الأجهزة لا تدعم
+
+    const currentTime = new Date();
+    const diffTime = currentTime - lastTime;
+    if (diffTime > 100) { // كل 100ms نحلّل
+      const deltaX = Math.abs(acc.x - (lastX || acc.x));
+      const deltaY = Math.abs(acc.y - (lastY || acc.y));
+      const deltaZ = Math.abs(acc.z - (lastZ || acc.z));
+
+      if (
+        (deltaX > SHAKE_THRESHOLD && deltaY > SHAKE_THRESHOLD) ||
+        (deltaX > SHAKE_THRESHOLD && deltaZ > SHAKE_THRESHOLD) ||
+        (deltaY > SHAKE_THRESHOLD && deltaZ > SHAKE_THRESHOLD)
+      ) {
+        extinguish();
+      }
+
+      lastTime = currentTime;
+      lastX = acc.x;
+      lastY = acc.y;
+      lastZ = acc.z;
+    }
+  }
+
+  // 3) فعل الاستماع للحركة بعد نقرة المستخدم (ضروري لبعض المتصفحات)
+  document.body.addEventListener('click', enableMotion, { once: true });
+
+  // … هنا تبقى باقي كود الكونفيتي أو كشف الصوت لو موجود
+});
+</script>
