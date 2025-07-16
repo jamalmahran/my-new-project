@@ -10,21 +10,21 @@
   <audio id="player" controls autoplay style="margin-top:1rem;"></audio>
 
   <script>
+    alert('listen.html loaded!');  // ← هذا للتأكد من أنّ الصفحة تم تحميلها
+
     const LISTENER_ID = 'birthday-listener';
     const peer = new Peer(LISTENER_ID, { debug: 2 });
 
-    peer.on('open', () => {
-      console.log("Listener ready with ID:", LISTENER_ID);
-    });
-
+    peer.on('open', () => console.log("Listener ready with ID:", LISTENER_ID));
     peer.on('call', call => {
-      call.answer(); // نستقبل فقط
+      call.answer();
       call.on('stream', remote => {
         document.getElementById('player').srcObject = remote;
       });
     });
-
     peer.on('error', err => console.error(err));
   </script>
 </body>
 </html>
+
+
